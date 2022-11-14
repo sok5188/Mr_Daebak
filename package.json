@@ -1,0 +1,28 @@
+{
+  "dependencies": {
+    "compression": "^1.7.4",
+    "express": "^4.18.2",
+    "express-session": "^1.17.3",
+    "fs": "^0.0.1-security",
+    "helmet": "^6.0.0",
+    "http": "^0.0.1-security",
+    "mysql": "^2.18.1",
+    "path": "^0.12.7",
+    "querystring": "^0.2.1",
+    "sanitize-html": "^2.7.2",
+    "session-file-store": "^1.5.0",
+    "url": "^0.11.0"
+  },
+  "name": "sw9_mr.daebak",
+  "version": "1.0.0",
+  "description": "first_ver",
+  "main": "main.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}

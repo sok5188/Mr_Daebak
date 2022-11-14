@@ -1,0 +1,2 @@
+INSERT INTO AUTH VALUES("sirong","shin",12349898,01051880185,0,"sirong5188");
+INSERT INTO AUTH VALUES("admin","Manager",0,0,0,"admin");
