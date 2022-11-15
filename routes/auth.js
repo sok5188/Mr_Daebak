@@ -2,6 +2,9 @@ var express = require("express");
 var router = express.Router();
 var path = require("path");
 var db = require("../lib/db.js");
+const cors = require("cors");
+const util = require("util");
+/*
 router.get("/login", function (req, res) {
   console.log("entered login page");
   let tmp_html = `
@@ -15,14 +18,17 @@ router.get("/login", function (req, res) {
     `;
   res.send(tmp_html);
 });
-
+*/
 router.post("/login_process", function (request, response) {
   //implement Login function
-  //console.log("entered login process");
+  console.log("entered login process");
+  console.log(request);
   var post = request.body;
   var id = post.id;
   var password = post.password;
-
+  console.log("body : ", post);
+  console.log("id", id, "password : ", password);
+  //console.log(`= = = > request : ${util.inspect(request)}`);
   //(+)id,password sanitize?
   db.query(
     `SELECT name FROM AUTH WHERE id=? AND password=?`,
@@ -35,11 +41,11 @@ router.post("/login_process", function (request, response) {
         request.session.name = name[0].name;
         //session에 저장할 내용을 save를 호출해서 저장한 후 callback함수로 리다이렉션을 해줌
         request.session.save(function () {
-          if (name[0].name == "Manager") response.redirect(`/manage`);
-          else response.redirect(`/order`);
+          if (name[0].name == "Manager") response.send("Manager");
+          else response.send("Customer");
         });
       } else {
-        response.send("Log In Fail..");
+        response.send("Fail");
         //팝업띄우거나 뭐.. 나중에 처리
       }
     }
