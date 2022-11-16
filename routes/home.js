@@ -14,9 +14,7 @@ var path = require("path");
 //   response.send(`${auth.Status(request, response)}  ${menu}`);
 // });
 router.get("/", function (request, response) {
-  response.sendFile(
-    path.join(__dirname, "/React/PizzaWebsite/build/index.html")
-  );
+  response.sendFile(path.join(__dirname, "/PizzaWebsite/build/index.html"));
 });
 
 module.exports = router;

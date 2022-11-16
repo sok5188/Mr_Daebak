@@ -4,6 +4,7 @@ var path = require("path");
 var db = require("../lib/db.js");
 const cors = require("cors");
 const util = require("util");
+const session = require("express-session");
 /*
 router.get("/login", function (req, res) {
   console.log("entered login page");
@@ -57,22 +58,29 @@ router.get("/logout", function (request, response) {
     response.redirect(`/`);
   });
 });
-
-router.get("/signin", function (request, response) {
-  let tmp_html = `
-        <form action="/auth/signin_process" method="post">
-            <p><input type="text" name="id" placeholder="id"></p>
-            <p><input type="password" name="password" placeholder="password"></p>
-            <p><input type="text" name="name" placeholder="name"></p>
-            <p><input type="number" name="credit" placeholder="credit"></p>
-            <p><input type="number" name="phone" placeholder="phone"></p>
-            <p>
-                <input type="submit" value="signin">
-            </p>
-        </form>
-    `;
-  response.send(tmp_html);
+router.get("/check_login", function (request, response) {
+  console.log("Got a login check signal");
+  if (request.session.is_logined) {
+    response.json({ name: request.session.name, islogin: "True" });
+  } else {
+    response.json({ name: "", islogin: "False" });
+  }
 });
+// router.get("/signin", function (request, response) {
+//   let tmp_html = `
+//         <form action="/auth/signin_process" method="post">
+//             <p><input type="text" name="id" placeholder="id"></p>
+//             <p><input type="password" name="password" placeholder="password"></p>
+//             <p><input type="text" name="name" placeholder="name"></p>
+//             <p><input type="number" name="credit" placeholder="credit"></p>
+//             <p><input type="number" name="phone" placeholder="phone"></p>
+//             <p>
+//                 <input type="submit" value="signin">
+//             </p>
+//         </form>
+//     `;
+//   response.send(tmp_html);
+// });
 
 router.post("/signin_process", function (request, response) {
   var post = request.body;
