@@ -1,53 +1,97 @@
 var express = require("express");
 var router = express.Router();
-var path = require("path");
-var url = require("url");
-var qs = require("querystring");
+// var path = require("path");
+// var url = require("url");
+// var qs = require("querystring");
 var db = require("../lib/db.js");
 
-router.get("/", function (request, response) {
-  console.log("entered order page");
-  var _url = request.url;
-  var queryData = url.parse(_url, true).query;
-
-  var option = ["simple", "grand", "deluxe"];
-  var dinner;
-  var title;
-  if (queryData.id == 1) {
-    //발렌타인 디너 : 작은 하트 모양과 큐피드가 장식된 접시에 냅킨과 함께 와인과 스테이크
-    dinner = ["wine", "steak"];
-    title = "valentine";
-  } else if (queryData.id == 2) {
-    //프렌치 디너 : 커피 한잔 와인 한잔 샐러드 스테이크
-    dinner = ["coffee", "glass of wine", "salad", "steak"];
-    title = "french";
-  } else if (queryData.id == 3) {
-    //잉글리시 디너 : 에그 스크램블 베이컨 빵 스테이크
-    dinner = ["scrambled egg", "bacon", "bread", "steak"];
-    title = "english";
-  } else {
-    //샴페인 디너 :항상 인 식사이고 샴페인 한병 개의 바게트빵 커피 한포트, 와인 스테이크
-    //그랜드 또는 디럭스만 가능
-    dinner = ["champagne", "baguette", "a pot of coffee", "wine", "steak"];
-    title = "champagne";
-    option.shift();
-  }
-  //여기서 정보를 process한테 보내줘야함 (/order/process)
-  response.send("Not implemented TT");
-});
-router.post("/process", function (request, response) {
-  //주문 메뉴, 주문 스타일, 추가,변경사항 넘겨받음
+router.post("/set", function (request, response) {
+  //set은 cart 상태와 pay상태만 설정 가능 (order DB에 튜플을 삽입하는 역할)
+  //설정할 주문 상태(카트,결제완료),고객 id,주문 메뉴, 주문 스타일,인원수, 추가변경사항 넘겨받음
   var post = request.body;
+  var state = post.state; //cart or pay
+  var id = request.session.cid; //로그인된 고객만 해당 상태를 set할수있으므로, id는 여기서 처리하자. 세션아이디로.
   var menu = post.menu;
   var style = post.style;
+  var num = post.num;
   var change = post.change;
+  console.log("Got order Set Signal List is");
+  console.log(post);
 
-  //주문 가능여부 체크
-  // 불가능시 팝업을 띄우고 메인으로 돌아가든 뭐 알아서 빠꾸
-  // 가능하면 주문완료창으로 이동 (/order/list)
+  console.log("id check : ", id);
+  db.query(
+    `INSERT INTO ORDERS(menu,style,customer_id,change_list,order_status,numbers) VALUES(?,?,?,?,?,?)`,
+    [menu, style, id, change, state, num],
+    function (err, result) {
+      if (err) {
+        response.json({ Status: "Fail" });
+        console.log("set Fail");
+      } else {
+        response.json({ status: "Success" });
+        console.log("set success");
+      }
+    }
+  );
 });
-router.get("/list", function (request, response) {
-  //주문 Db에서 고객id 외래키 이용해서 정보를 불러와 보여줌
-  //뭐 홈으로 리다이렉트 하는 버튼 있어야함
+
+router.post("/modify", function (request, response) {
+  //modify는 주문의 상태를 변경 ()
+  //주문 번호, 변경할 상태 받음
+  var post = request.body;
+  var order_id = post.order_id;
+  var state = post.state;
+  db.query(
+    `UPDATE ORDERS SET order_status = ? WHERE order_id =?`,
+    [state, order_id],
+    function (err, result) {
+      if (err) response.json({ Status: "Fail" });
+      else response.json({ status: "Success" });
+    }
+  );
 });
+router.post("/get", function (request, response) {
+  //state에 맞는 주문을 리턴한다.
+  //고객id에 *가 오면 state로 온 상태에 존재하는 전체 주문을 조회(괸리자가실행할부분), else, 고객이 자신의 주문을 확인하는 용도
+  //return은 주문번호, 메뉴,스타일,변경사항,주문상태,주문수(갯수)
+  var post = request.body;
+  console.log(post);
+  var id = post.uid;
+  var state = post.state;
+  console.log("Got Get Signal");
+  console.log(id);
+  if (id == "Manager") {
+    //관리자가 조회를 하는 경우
+    console.log("Manger Viewing");
+    db.query(
+      `SELECT * FROM ORDERS WHERE order_status=? `,
+      [state],
+      function (err, results) {
+        console.log(results);
+        response.json(results);
+      }
+    );
+  } else {
+    //고객이 자신의 주문을 확인하는 경우
+    console.log("Customer Viewing now cid : ", request.session.cid);
+    db.query(
+      `SELECT * FROM ORDERS WHERE customer_id=? AND order_status=?`,
+      [request.session.cid, state],
+      function (err, results) {
+        if (err) {
+          console.log("Load Fail");
+          response.send("Fail");
+        } else {
+          console.log(results);
+          response.json(results);
+        }
+      }
+    );
+  }
+});
+router.post("/pay", function (request, response) {
+  //고객의 결제창에서 처리되는 부분
+  //고객의 정보들을 전부 리턴해주고 주문 정보들 전부 리턴?
+  //need?
+});
+
 module.exports = router;

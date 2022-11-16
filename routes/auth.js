@@ -4,6 +4,7 @@ var path = require("path");
 var db = require("../lib/db.js");
 const cors = require("cors");
 const util = require("util");
+const session = require("express-session");
 /*
 router.get("/login", function (req, res) {
   console.log("entered login page");
@@ -39,6 +40,7 @@ router.post("/login_process", function (request, response) {
         //login success
         request.session.is_logined = true;
         request.session.name = name[0].name;
+        request.session.cid = id;
         //session에 저장할 내용을 save를 호출해서 저장한 후 callback함수로 리다이렉션을 해줌
         request.session.save(function () {
           if (name[0].name == "Manager") response.send("Manager");
@@ -46,33 +48,43 @@ router.post("/login_process", function (request, response) {
         });
       } else {
         response.send("Fail");
-        //팝업띄우거나 뭐.. 나중에 처리
       }
     }
   );
 });
 
-router.get("/logout", function (request, response) {
+router.post("/logout", function (request, response) {
+  console.log("Got a logout Signal");
   request.session.destroy(function (err) {
-    response.redirect(`/`);
+    response.send("Done");
   });
 });
 
-router.get("/signin", function (request, response) {
-  let tmp_html = `
-        <form action="/auth/signin_process" method="post">
-            <p><input type="text" name="id" placeholder="id"></p>
-            <p><input type="password" name="password" placeholder="password"></p>
-            <p><input type="text" name="name" placeholder="name"></p>
-            <p><input type="number" name="credit" placeholder="credit"></p>
-            <p><input type="number" name="phone" placeholder="phone"></p>
-            <p>
-                <input type="submit" value="signin">
-            </p>
-        </form>
-    `;
-  response.send(tmp_html);
+router.get("/check_login", function (request, response) {
+  console.log("Got a login check signal");
+  if (request.session.is_logined) {
+    console.log("he is logined");
+    response.json({ name: request.session.name, islogin: "True" });
+  } else {
+    response.json({ name: "", islogin: "False" });
+  }
 });
+
+// router.get("/signin", function (request, response) {
+//   let tmp_html = `
+//         <form action="/auth/signin_process" method="post">
+//             <p><input type="text" name="id" placeholder="id"></p>
+//             <p><input type="password" name="password" placeholder="password"></p>
+//             <p><input type="text" name="name" placeholder="name"></p>
+//             <p><input type="number" name="credit" placeholder="credit"></p>
+//             <p><input type="number" name="phone" placeholder="phone"></p>
+//             <p>
+//                 <input type="submit" value="signin">
+//             </p>
+//         </form>
+//     `;
+//   response.send(tmp_html);
+// });
 
 router.post("/signin_process", function (request, response) {
   var post = request.body;
