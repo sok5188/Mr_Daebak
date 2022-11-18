@@ -24,7 +24,7 @@ router.post("/set", function (request, response) {
     [menu, style, id, change, state, num],
     function (err, result) {
       if (err) {
-        response.json({ Status: "Fail" });
+        response.json({ status: "Fail" });
         console.log("set Fail");
       } else {
         response.json({ status: "Success" });
@@ -44,7 +44,7 @@ router.post("/modify", function (request, response) {
     `UPDATE ORDERS SET order_status = ? WHERE order_id =?`,
     [state, order_id],
     function (err, result) {
-      if (err) response.json({ Status: "Fail" });
+      if (err) response.json({ status: "Fail" });
       else response.json({ status: "Success" });
     }
   );
@@ -62,14 +62,10 @@ router.post("/get", function (request, response) {
   if (id == "Manager") {
     //관리자가 조회를 하는 경우
     console.log("Manger Viewing");
-    db.query(
-      `SELECT * FROM ORDERS WHERE order_status=? `,
-      [state],
-      function (err, results) {
-        console.log(results);
-        response.json(results);
-      }
-    );
+    db.query(`SELECT * FROM ORDERS`, [state], function (err, results) {
+      console.log(results);
+      response.json(results);
+    });
   } else {
     //고객이 자신의 주문을 확인하는 경우
     console.log("Customer Viewing now cid : ", request.session.cid);
@@ -93,5 +89,7 @@ router.post("/pay", function (request, response) {
   //고객의 정보들을 전부 리턴해주고 주문 정보들 전부 리턴?
   //need?
 });
-
+router.get("*", function (request, response) {
+  response.sendFile(path.join(__dirname, "/PizzaWebsite/build/index.html"));
+});
 module.exports = router;

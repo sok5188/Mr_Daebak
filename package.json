@@ -28,12 +28,15 @@
   "name": "sw9_mr.daebak",
   "version": "1.0.0",
   "description": "first_ver",
-  "main": "main.js",
   "directories": {
     "lib": "lib"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": "16.17.1"
   },
   "author": "",
   "license": "ISC"
