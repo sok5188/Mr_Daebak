@@ -1,0 +1,5 @@
+터미널에서 mysql실행 (경로찾아서 실행헤야 함)
+lib의 db처럼 설정하던지 아니면 설정한 값에 맞춰서 db를 변경
+SQL쿼리안에 create문들 다 실행
+.. 끝?
+order_status rule정해야 함..

@@ -1,3 +1,2 @@
-ORDERS의 order_status의 상태 종류는 장바구니에 담긴 Cart, 즉시결제를 원하는 경우인 WillPay
-결제완료상태인 Pay 요리완료상태인 Cooked 배달 완료 상태인 Delivered
+ORDERS의 order_status의 상태 종류 : Cart, ..
 
