@@ -9,7 +9,7 @@ router.post("/set", function (request, response) {
   //set은 cart 상태와 pay상태만 설정 가능 (order DB에 튜플을 삽입하는 역할)
   //설정할 주문 상태(카트,결제완료),고객 id,주문 메뉴, 주문 스타일,인원수, 추가변경사항 넘겨받음
   var post = request.body;
-  var state = post.state; //cart or pay
+  var state = "Cart"; //cart or pay
   var id = request.session.cid; //로그인된 고객만 해당 상태를 set할수있으므로, id는 여기서 처리하자. 세션아이디로.
   var menu = post.menu;
   var style = post.style;
