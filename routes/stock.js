@@ -41,5 +41,7 @@ router.post("/set", function (request, response) {
     );
   });
 });
-
+router.get("*", function (request, response) {
+  response.sendFile(path.join(__dirname, "/PizzaWebsite/build/index.html"));
+});
 module.exports = router;
