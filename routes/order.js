@@ -16,9 +16,9 @@ router.post("/set", function (request, response) {
   var num = post.num;
   var change = post.change;
   console.log("Got order Set Signal List is");
-  console.log(post);
+  //console.log(post);
 
-  console.log("id check : ", id);
+  //console.log("id check : ", id);
   db.query(
     `INSERT INTO ORDERS(menu,style,customer_id,change_list,order_status,numbers) VALUES(?,?,?,?,?,?)`,
     [menu, style, id, change, state, num],
@@ -35,35 +35,61 @@ router.post("/set", function (request, response) {
 });
 
 router.post("/modify", function (request, response) {
+  console.log("Got modify signal");
   //modify는 주문의 상태를 변경 ()
   //주문 번호, 변경할 상태 받음
   var post = request.body;
   var order_id = post.order_id;
   var state = post.state;
-  db.query(
-    `UPDATE ORDERS SET order_status = ? WHERE order_id =?`,
-    [state, order_id],
-    function (err, result) {
-      if (err) response.json({ status: "Fail" });
-      else response.json({ status: "Success" });
-    }
-  );
+  var cid = request.session.cid;
+  //console.log(post);
+  if (state == "before_pay") {
+    //카트에 있는 주문을 전부 결제하는 방식(임시)
+    console.log("in before_pay");
+    db.query(
+      `UPDATE ORDERS SET order_status = ? WHERE order_status =? AND customer_id=?`,
+      [state, "Cart", cid],
+      function (err, result) {
+        if (err) response.json({ status: "Fail" });
+        else response.json({ status: "Success" });
+      }
+    );
+  } else if (state == "payment") {
+    console.log("in payment");
+    db.query(
+      `UPDATE ORDERS SET order_status = ? WHERE order_status =? AND customer_id=?`,
+      [state, "before_pay", cid],
+      function (err, result) {
+        if (err) response.json({ status: "Fail" });
+        else response.json({ status: "Success" });
+      }
+    );
+  } else {
+    db.query(
+      `UPDATE ORDERS SET order_status = ? WHERE order_id =?`,
+      [state, order_id],
+      function (err, result) {
+        if (err) response.json({ status: "Fail" });
+        else response.json({ status: "Success" });
+      }
+    );
+  }
 });
 router.post("/get", function (request, response) {
   //state에 맞는 주문을 리턴한다.
   //고객id에 *가 오면 state로 온 상태에 존재하는 전체 주문을 조회(괸리자가실행할부분), else, 고객이 자신의 주문을 확인하는 용도
   //return은 주문번호, 메뉴,스타일,변경사항,주문상태,주문수(갯수)
   var post = request.body;
-  console.log(post);
+  //console.log(post);
   var id = post.uid;
   var state = post.state;
   console.log("Got Get Signal");
-  console.log(id);
+  //console.log(id);
   if (id == "Manager") {
     //관리자가 조회를 하는 경우
     console.log("Manger Viewing");
-    db.query(`SELECT * FROM ORDERS`, [state], function (err, results) {
-      console.log(results);
+    db.query(`SELECT * FROM ORDERS`, function (err, results) {
+      //console.log(results);
       response.json(results);
     });
   } else {
@@ -77,7 +103,7 @@ router.post("/get", function (request, response) {
           console.log("Load Fail");
           response.send("Fail");
         } else {
-          console.log(results);
+          //console.log(results);
           response.json(results);
         }
       }

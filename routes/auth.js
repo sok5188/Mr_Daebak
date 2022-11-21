@@ -85,6 +85,45 @@ router.post("/signin_process", function (request, response) {
     }
   );
 });
+router.get("/get", function (request, response) {
+  console.log("got auth get signal");
+  //주문 결제창에서 유저의 정보 요청
+  db.query(
+    `SELECT * FROM AUTH WHERE id=?`,
+    [request.session.cid],
+    function (err, results) {
+      if (err) {
+        console.log("auth get failed");
+        response.send("Fail");
+      } else {
+        console.log("auth get Success");
+        response.json(results);
+      }
+    }
+  );
+});
+router.post("/set", function (request, response) {
+  //주문시 visit증가
+  db.query(
+    `SELECT visit FROM AUTH WHERE id=?`,
+    [request.session.cid],
+    function (err, result) {
+      if (err) {
+        response.send("Fail");
+      } else {
+        db.query(
+          `UPDATE AUTH SET visit=? WHERE id=?`,
+          [result + 1, request.session.cid],
+          function (err2, results) {
+            if (err) {
+              response.send("Fail");
+            } else response.send("Success");
+          }
+        );
+      }
+    }
+  );
+});
 router.get("*", function (request, response) {
   response.sendFile(path.join(__dirname, "/PizzaWebsite/build/index.html"));
 });
