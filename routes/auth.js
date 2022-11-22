@@ -113,7 +113,7 @@ router.post("/set", function (request, response) {
       } else {
         db.query(
           `UPDATE AUTH SET visit=? WHERE id=?`,
-          [result + 1, request.session.cid],
+          [result[0].visit + 1, request.session.cid],
           function (err2, results) {
             if (err) {
               response.send("Fail");
