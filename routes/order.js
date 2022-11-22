@@ -9,19 +9,37 @@ router.post("/set", function (request, response) {
   //set은 cart 상태와 pay상태만 설정 가능 (order DB에 튜플을 삽입하는 역할)
   //설정할 주문 상태(카트,결제완료),고객 id,주문 메뉴, 주문 스타일,인원수, 추가변경사항 넘겨받음
   var post = request.body;
-  var state = "Cart"; //cart or pay
+  var state = "Cart";
   var id = request.session.cid; //로그인된 고객만 해당 상태를 set할수있으므로, id는 여기서 처리하자. 세션아이디로.
   var menu = post.menu;
   var style = post.style;
   var num = post.num;
-  var change = post.change;
+  var total_price = post.total_price;
+  var steak_num = post.steak_num;
+  var salad_num, egg_num, bacon_num, bread_num;
+  salad_num = post.salad_num;
+  egg_num = post.egg_num;
+  bacon_num = post.bacon_num;
+  bread_num = post.bread_num;
   console.log("Got order Set Signal List is");
-  //console.log(post);
+  console.log(post);
 
   //console.log("id check : ", id);
   db.query(
-    `INSERT INTO ORDERS(menu,style,customer_id,change_list,order_status,numbers) VALUES(?,?,?,?,?,?)`,
-    [menu, style, id, change, state, num],
+    `INSERT INTO ORDERS(menu,style,customer_id,order_status,numbers,steak_num,salad_num,egg_num,bacon_num,bread_num,total_price) VALUES(?,?,?,?,?,?,?,?,?,?,?)`,
+    [
+      menu,
+      style,
+      id,
+      state,
+      num,
+      steak_num,
+      salad_num,
+      egg_num,
+      bacon_num,
+      bread_num,
+      total_price,
+    ],
     function (err, result) {
       if (err) {
         response.json({ status: "Fail" });
