@@ -172,6 +172,56 @@ router.post("/get_price", function (request, response) {
     }
   );
 });
+router.post("/reorder_byid", function (request, response) {
+  console.log("got getbyid signal");
+  var post = request.body;
+  console.log();
+  var order_id = post.order_id;
+  console.log("target order id : ", order_id);
+  db.query(
+    `SELECT * FROM ORDERS WHERE order_id=?`,
+    [order_id],
+    function (err, results) {
+      if (err) {
+        console.log("Load Fail");
+        response.send("Fail");
+      } else {
+        console.log(results);
+        console.log(results[0]);
+        //console.log(results.data);
+        console.log(results[0].menu, results[0].style);
+        db.query(
+          `INSERT INTO ORDERS(menu,style,customer_id,order_status,numbers,steak_num,salad_num,egg_num,bacon_num,bread_num,total_price,wine_num,delivery_time,delivery_date) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+          [
+            results[0].menu,
+            results[0].style,
+            results[0].id,
+            "before_pay",
+            results[0].num,
+            results[0].steak_num,
+            results[0].salad_num,
+            results[0].egg_num,
+            results[0].bacon_num,
+            results[0].bread_num,
+            results[0].total_price,
+            results[0].wine_num,
+            results[0].delivery_time,
+            results[0].delivery_date,
+          ],
+          function (err2, result) {
+            if (err2) {
+              console.log("Fail to insert");
+              response.send("Fail");
+            } else {
+              console.log("success to insert");
+              response.send("Success");
+            }
+          }
+        );
+      }
+    }
+  );
+});
 router.get("*", function (request, response) {
   response.sendFile(path.join(__dirname, "/PizzaWebsite/build/index.html"));
 });
