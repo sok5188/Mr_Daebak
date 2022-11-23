@@ -124,6 +124,17 @@ router.post("/set", function (request, response) {
     }
   );
 });
+router.get("/get_visit", function (request, response) {
+  console.log("got get visit siganl");
+  db.query(
+    `SELECT visit FROM AUTH WHERE id=?`,
+    [request.session.cid],
+    function (err, result) {
+      if (err) response.send("Fail");
+      else response.send(result[0].visit);
+    }
+  );
+});
 router.get("*", function (request, response) {
   response.sendFile(path.join(__dirname, "/PizzaWebsite/build/index.html"));
 });

@@ -28,12 +28,14 @@ router.post("/set", function (request, response) {
   if (!bacon_num) bacon_num = 0;
   if (!bread_num) bread_num = 0;
   if (!wine_num) wine_num = 0;
+  var delivery_time = post.delivery_time;
+  var delivery_date = post.delivery_date;
   console.log("Got order Set Signal List is");
   console.log(post);
   console.log("salad value check: ", salad_num);
   //console.log("id check : ", id);
   db.query(
-    `INSERT INTO ORDERS(menu,style,customer_id,order_status,numbers,steak_num,salad_num,egg_num,bacon_num,bread_num,total_price,wine_num) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)`,
+    `INSERT INTO ORDERS(menu,style,customer_id,order_status,numbers,steak_num,salad_num,egg_num,bacon_num,bread_num,total_price,wine_num,delivery_time,delivery_date) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
     [
       menu,
       style,
@@ -47,6 +49,8 @@ router.post("/set", function (request, response) {
       bread_num,
       total_price,
       wine_num,
+      delivery_time,
+      delivery_date,
     ],
     function (err, result) {
       if (err) {
