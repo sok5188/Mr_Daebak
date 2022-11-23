@@ -195,9 +195,9 @@ router.post("/reorder_byid", function (request, response) {
           [
             results[0].menu,
             results[0].style,
-            results[0].id,
+            request.session.cid,
             "before_pay",
-            results[0].num,
+            results[0].numbers,
             results[0].steak_num,
             results[0].salad_num,
             results[0].egg_num,
@@ -222,7 +222,5 @@ router.post("/reorder_byid", function (request, response) {
     }
   );
 });
-router.get("*", function (request, response) {
-  response.sendFile(path.join(__dirname, "/PizzaWebsite/build/index.html"));
-});
+
 module.exports = router;
