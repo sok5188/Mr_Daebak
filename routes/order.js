@@ -172,6 +172,24 @@ router.post("/get_price", function (request, response) {
     }
   );
 });
+router.post("/getbyid", function (request, response) {
+  console.log("got getbyid signal");
+  var post = request.body;
+  var order_id = post.order_id;
+  db.query(
+    `SELECT * FROM ORDERS WHERE order_id=?`,
+    [order_id],
+    function (err, result) {
+      if (err) {
+        console.log("Fail");
+        response.send("Fail");
+      } else {
+        console.log("Success");
+        response.json(result);
+      }
+    }
+  );
+});
 router.post("/reorder_byid", function (request, response) {
   console.log("got getbyid signal");
   var post = request.body;
