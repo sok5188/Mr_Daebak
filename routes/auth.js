@@ -43,7 +43,7 @@ router.post("/logout", function (request, response) {
   });
 });
 
-router.get("/check_login", function (request, response) {
+router.post("/check_login", function (request, response) {
   console.log("Got a login check signal");
   if (request.session.is_logined) {
     console.log("he is logined");
@@ -135,7 +135,5 @@ router.get("/get_visit", function (request, response) {
     }
   );
 });
-router.get("*", function (request, response) {
-  response.sendFile(path.join(__dirname, "/PizzaWebsite/build/index.html"));
-});
+
 module.exports = router;
