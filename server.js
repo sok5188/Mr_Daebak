@@ -49,7 +49,6 @@ app.use(function (req, res, next) {
 });
 app.use(function (err, req, res, next) {
   console.error(err.stack);
-  res.status(500).send("Something broke!");
 });
 const port = process.env.port || 8008;
 //"192.168.0.11",

@@ -130,21 +130,38 @@ router.post("/get", function (request, response) {
   } else {
     //고객이 자신의 주문을 확인하는 경우
     console.log("Customer Viewing now cid : ", request.session.cid);
-    db.query(
-      `SELECT * FROM ORDERS WHERE customer_id=? AND order_status=?`,
-      [request.session.cid, state],
-      function (err, results) {
-        if (err) {
-          console.log("Load Fail");
-          response.send("Fail");
-        } else {
-          //console.log(results);
-          response.json(results);
+    if (state == "") {
+      db.query(
+        `SELECT * FROM ORDERS WHERE customer_id=?`,
+        [request.session.cid],
+        function (err, results) {
+          if (err) {
+            console.log("Load Fail");
+            response.send("Fail");
+          } else {
+            //console.log(results);
+            response.json(results);
+          }
         }
-      }
-    );
+      );
+    } else {
+      db.query(
+        `SELECT * FROM ORDERS WHERE customer_id=? AND order_status=?`,
+        [request.session.cid, state],
+        function (err, results) {
+          if (err) {
+            console.log("Load Fail");
+            response.send("Fail");
+          } else {
+            //console.log(results);
+            response.json(results);
+          }
+        }
+      );
+    }
   }
 });
+
 router.post("/delete", function (request, response) {
   var post = request.body;
   let order_id = post.order_id;
