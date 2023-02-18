@@ -16,3 +16,7 @@ SoftwareEngineeringProject
 해당 웹은 MySQL DB와 통신하는 express로 만들어진 node.js 백엔드서버와 React로 만든 클라이언트로 이루어져 있습니다.  
 
 React 부분 Github : https://github.com/jackine08/PizzaWebsite
+
+---
+
+자세한 내용은 소스 코드와 [프로젝트 PDF](https://github.com/sok5188/Mr_Daebak/blob/main/MrDeabak_PDF.pdf) 을 참고 해 주시면 감사하겠습니다.
